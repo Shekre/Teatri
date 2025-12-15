@@ -48,6 +48,8 @@ export async function holdSeatsAction(eventId: string, seatIds: string[]) {
     return { success: true, bookingIds };
 }
 
+import { prisma } from '@/lib/prisma';
+
 export async function processPaymentAction(bookingIds: string[], email: string, name: string) {
     // 1. Simulate Payment
     const paymentIntentId = 'pi_mock_' + Date.now();
@@ -59,9 +61,6 @@ export async function processPaymentAction(bookingIds: string[], email: string, 
 
     // Again, need to refactor `booking.ts` or Update manually here using Prisma directly?
     // I'll use Prisma directly here for expediency.
-
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
 
     try {
         await prisma.$transaction(async (tx: any) => {

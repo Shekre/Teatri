@@ -1,10 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-import { getEventById } from '@/lib/data';
-import { getSeatPrice } from '@/lib/pricing';
-import SeatMap from '@/components/SeatMap';
-import styles from './page.module.css';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // Force dynamic because pricing/availability might change
 export const dynamic = 'force-dynamic';

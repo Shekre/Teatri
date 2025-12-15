@@ -1,7 +1,6 @@
-import { PrismaClient, Booking } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+import { Booking } from '@prisma/client';
 import { addMinutes, isAfter } from 'date-fns';
-
-const prisma = new PrismaClient();
 
 const HOLD_DURATION_MINUTES = 10;
 

@@ -1,7 +1,5 @@
 import styles from './admin.module.css';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 export default async function AdminDashboard() {
     const eventCount = await prisma.event.count();
