@@ -12,7 +12,7 @@ export async function holdSeatsAction(eventId: string, seatIds: string[]) {
     // Production app needs atomic "holdAllOrNone".
     // Assuming high availability for now.
 
-    const results = await Promise.all(seatIds.map(id => holdSeat(eventId, id, 'guest'))); // Guest ID placeholder
+    const results = await Promise.all(seatIds.map(id => holdSeat(eventId, id, null))); // Guest ID placeholder
 
     const failed = results.find(r => !r.success);
     if (failed) {

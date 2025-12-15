@@ -111,3 +111,10 @@ model Ticket {
   
   @@unique([bookingId, seatId]) // One ticket per seat per booking
 }
+
+// -- CMS Content --
+model PageContent {
+  key       String   @id // e.g. "about.en", "about.sq"
+  content   Json     // Structure depends on page
+  updatedAt DateTime @updatedAt
+}

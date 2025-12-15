@@ -13,12 +13,12 @@
     "seed": "ts-node --compiler-options {\"module\":\"commonjs\"} prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^7.1.0",
+    "@prisma/client": "^5.22.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.561.0",
     "next": "16.0.10",
-    "prisma": "^7.1.0",
+    "prisma": "^5.22.0",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },

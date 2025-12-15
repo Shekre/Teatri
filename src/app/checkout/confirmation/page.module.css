@@ -1,0 +1,30 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--background);
+}
+
+.card {
+    text-align: center;
+    padding: 3rem;
+    background: #1a1a1a;
+    border-radius: 12px;
+}
+
+.title {
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.button {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    background: var(--gold);
+    color: black;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}

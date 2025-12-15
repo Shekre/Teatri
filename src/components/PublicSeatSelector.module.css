@@ -1,0 +1,222 @@
+.container {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 8px;
+    color: white;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.tabs button {
+    padding: 0.75rem 1.5rem;
+    background: #2a2a2a;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.activeTab {
+    background: var(--gold) !important;
+    color: black !important;
+    font-weight: bold;
+}
+
+.seatMapContainer {
+    background: #0a0a0a;
+    padding: 2rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    min-height: 400px;
+}
+
+.seatGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.rowLabel {
+    color: #fff;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+}
+
+.seat {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #444;
+    background: #222;
+    color: white;
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.seat:hover:not(:disabled) {
+    transform: scale(1.1);
+    border-color: var(--gold);
+}
+
+.seat.selected {
+    background: var(--gold) !important;
+    color: black;
+    font-weight: bold;
+    border-color: var(--gold);
+}
+
+.seat.unavailable {
+    background: #555;
+    color: #888;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.stage {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #2a2a2a;
+    text-align: center;
+    font-weight: bold;
+    color: var(--gold);
+    border-radius: 4px;
+    width: 400px;
+}
+
+.llozhaContainer {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: white;
+}
+
+.llozhaBoxes {
+    display: flex;
+    gap: 4rem;
+}
+
+.boxColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.boxColumn h4 {
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+
+.box {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    background: #222;
+    border-radius: 4px;
+}
+
+.boxName {
+    font-size: 12px;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.boxSeats {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.sideSeatsContainer {
+    display: flex;
+    gap: 4rem;
+}
+
+.sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sideColumn h5 {
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: #2a2a2a;
+    border-radius: 8px;
+}
+
+.selectionSummary {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.totalPrice {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--gold);
+}
+
+.checkoutBtn {
+    padding: 1rem 2rem;
+    background: var(--gold);
+    color: black;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.checkoutBtn:hover:not(:disabled) {
+    transform: scale(1.05);
+}
+
+.checkoutBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .seatMapContainer {
+        overflow-x: scroll;
+    }
+
+    .seat {
+        width: 24px;
+        height: 24px;
+        font-size: 9px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

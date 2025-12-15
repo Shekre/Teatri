@@ -50,6 +50,28 @@ async function main() {
         }
     })
 
+    const event2 = await prisma.event.create({
+        data: {
+            title: 'La Traviata - Opera',
+            description: 'Verdi’s masterpiece of love and sacrifice.',
+            startDate: new Date('2026-01-10T18:00:00Z'),
+            endDate: new Date('2026-01-10T21:00:00Z'),
+            image: 'https://cdn.sanity.io/images/0vv8moc6/pk_production/0f8a85f8af8b5d5d6d8f8d8d8d8d8d8d8d8d8d8d-1920x1080.jpg',
+            location: 'TKOB Main Hall'
+        }
+    })
+
+    const event3 = await prisma.event.create({
+        data: {
+            title: 'Mozart Requiem - Concert',
+            description: 'A solemn and majestic performance.',
+            startDate: new Date('2026-02-14T20:00:00Z'),
+            endDate: new Date('2026-02-14T22:00:00Z'),
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Wolfgang-amadeus-mozart_1.jpg/800px-Wolfgang-amadeus-mozart_1.jpg',
+            location: 'TKOB Main Hall'
+        }
+    })
+
     // 3. Create Pricing Rules (PriceAreas)
     await prisma.priceArea.create({
         data: {
@@ -60,6 +82,32 @@ async function main() {
             price: 1000,
             priority: 10,
             color: '#D4AF37'
+        }
+    })
+
+    // Pricing for Event 2
+    await prisma.priceArea.create({
+        data: {
+            eventId: event2.id,
+            name: 'Plate – Standard',
+            selectors: JSON.stringify({ rows: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] }),
+            saleStatus: 'FOR_SALE',
+            price: 1500,
+            priority: 5,
+            color: '#A0A0A0'
+        }
+    })
+
+    // Pricing for Event 3
+    await prisma.priceArea.create({
+        data: {
+            eventId: event3.id,
+            name: 'General Admission',
+            selectors: JSON.stringify({ rows: ['A', 'B', 'C', 'D', 'E'] }), // Simplified
+            saleStatus: 'FOR_SALE',
+            price: 800,
+            priority: 5,
+            color: '#A0A0A0'
         }
     })
 

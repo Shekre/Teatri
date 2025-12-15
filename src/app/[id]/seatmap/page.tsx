@@ -1,10 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import { getEventById } from '@/lib/data';
-import { getSeatPrice } from '@/lib/pricing';
-import SeatMap from '@/components/SeatMap';
+import PublicSeatSelector from '@/components/PublicSeatSelector';
 import styles from './page.module.css';
 
-// Force dynamic because pricing/availability might change
 export const dynamic = 'force-dynamic';
 
 export default async function SeatMapPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,14 +13,7 @@ export default async function SeatMapPage({ params }: { params: Promise<{ id: st
         return <div>Event not found</div>;
     }
 
-    // Fetch all seats
-    const seats = await prisma.seat.findMany();
-
-    // Fetch SOLD/HELD tickets
-    // In a real app we need to check availability status in DB (Booking table)
-    // Our getSeatPrice logic calculates PRICE rules, but availability is dynamic.
-    // We need to fetch tickets for this event.
-
+    // Fetch tickets for this event to check availability
     const tickets = await prisma.ticket.findMany({
         where: {
             booking: {
@@ -31,41 +22,48 @@ export default async function SeatMapPage({ params }: { params: Promise<{ id: st
             }
         },
         include: {
-            booking: true
+            booking: true,
+            seat: true
         }
     });
 
-    const ticketMap = new Map();
-    tickets.forEach(t => {
-        ticketMap.set(t.seatId, t.booking.status);
+    // Build a map of seat availability
+    // We need to map seat identifiers (row-number format) to their status
+    const seatStatusMap = new Map();
+
+    // First, determine pricing for all possible seats based on price areas
+    event.priceAreas.forEach((priceArea: any) => {
+        try {
+            const selectors = JSON.parse(priceArea.selectors);
+
+            if (selectors.seats) {
+                // Admin-created rules store seat IDs directly
+                selectors.seats.forEach((seatId: string) => {
+                    seatStatusMap.set(seatId, {
+                        id: seatId,
+                        status: priceArea.saleStatus as any,
+                        price: priceArea.price,
+                        color: priceArea.color || '#444'
+                    });
+                });
+            }
+        } catch (e) {
+            console.error('Failed to parse selectors', e);
+        }
     });
 
-    // Calculate state for each seat
-    const seatStates = seats.map(seat => {
-        // 1. Pricing Rules
-        const pricing = getSeatPrice(seat, event.priceAreas);
+    // Override with sold/held tickets
+    tickets.forEach((ticket: any) => {
+        const seat = ticket.seat;
+        // Build seat ID from seat data
+        const seatId = seat.row ? `${seat.row}-${seat.number}` : `${seat.section}-${seat.number}`;
 
-        // 2. Override with Real Availability
-        let finalStatus = pricing.status;
-        const bookingStatus = ticketMap.get(seat.id); // CONFIRMED or PENDING
-
-        if (bookingStatus === 'CONFIRMED') {
-            finalStatus = 'SOLD';
-        } else if (bookingStatus === 'PENDING') {
-            finalStatus = 'HELD';
-        }
-
-        return {
-            id: seat.id,
-            x: seat.x || 0,
-            y: seat.y || 0,
-            row: seat.row,
-            number: seat.number,
-            section: seat.section,
-            status: finalStatus,
-            price: pricing.price,
-            color: pricing.color
-        };
+        seatStatusMap.set(seatId, {
+            id: seatId,
+            status: ticket.booking.status === 'CONFIRMED' ? 'SOLD' : 'HELD',
+            price: ticket.priceAtBooking,
+            color: '#000'
+        });
     });
 
     return (
@@ -76,7 +74,7 @@ export default async function SeatMapPage({ params }: { params: Promise<{ id: st
             </div>
 
             <div className={styles.container}>
-                <SeatMap seats={seatStates} eventId={id} />
+                <PublicSeatSelector seatStatusMap={seatStatusMap} eventId={id} />
             </div>
         </main>
     );

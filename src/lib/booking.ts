@@ -17,14 +17,63 @@ export type BookingResult = {
 export async function holdSeat(
     eventId: string,
     seatId: string,
-    userId: string
+    userId: string | null
 ): Promise<BookingResult> {
     // We need a transaction to ensure atomicity
     return await prisma.$transaction(async (tx) => {
+        // Parse seatId to extract row, number, section
+        // Format can be: "A-1", "Llozha Djathtas-17-1", "Side-Left-40", etc.
+        let row: string | null = null;
+        let number: string;
+        let section: string = 'Platea'; // default
+
+        const parts = seatId.split('-');
+        if (parts.length === 2) {
+            // Format: "A-1" or "Z-25"
+            row = parts[0];
+            number = parts[1];
+            section = 'Platea';
+        } else if (parts.length === 3 && parts[0] === 'Side') {
+            // Format: "Side-Left-40" or "Side-Right-57"
+            section = `Side-${parts[1]}`;
+            number = parts[2];
+        } else if (parts.length === 3) {
+            // Format: "Llozha Djathtas-17-1" or "Llozha Majtas-24-2"
+            section = parts[0] + ' ' + parts[1]; // "Llozha Djathtas" or "Llozha Majtas"
+            row = parts[2]; // box number
+            number = parts[3] || '1';
+        } else {
+            // Fallback
+            section = parts.slice(0, -1).join(' ');
+            number = parts[parts.length - 1];
+        }
+
+        // Find or create the seat
+        let seat = await tx.seat.findFirst({
+            where: {
+                section,
+                row,
+                number
+            }
+        });
+
+        if (!seat) {
+            // Create the seat dynamically
+            seat = await tx.seat.create({
+                data: {
+                    section,
+                    row,
+                    number,
+                    x: null,
+                    y: null
+                }
+            });
+        }
+
         // 1. Check existing tickets for this seat/event
         const existingTicket = await tx.ticket.findFirst({
             where: {
-                seatId: seatId,
+                seatId: seat.id,
                 booking: {
                     eventId: eventId,
                     status: { in: ['CONFIRMED', 'PENDING'] }
@@ -64,10 +113,10 @@ export async function holdSeat(
                 totalAmount: 0, // Placeholder
                 expiresAt,
                 tickets: {
-                    create: {
-                        seatId,
-                        priceAtBooking: 0 // Placeholder
-                    }
+                    create: [{
+                        seatId: seat.id,
+                        priceAtBooking: 0 // TODO: fetch from PriceArea rules
+                    }]
                 }
             }
         });

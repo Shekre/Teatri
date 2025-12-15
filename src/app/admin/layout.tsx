@@ -1,11 +1,20 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import styles from './admin.module.css';
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const cookieStore = await cookies();
+    const auth = cookieStore.get('auth');
+
+    if (!auth) {
+        redirect('/login');
+    }
+
     return (
         <div className={styles.layout}>
             <aside className={styles.sidebar}>
