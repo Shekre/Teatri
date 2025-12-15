@@ -109,7 +109,7 @@ export default function SeatMap({ seats, eventId }: Props) {
                     <p>{hoveredSeat.section}</p>
                     <p>Row {hoveredSeat.row} - Seat {hoveredSeat.number}</p>
                     <p className={styles.tooltipPrice}>
-                        {hoveredSeat.status === 'FOR_SALE' ? `${hoveredSeat.price} ALL` : hoverSeat.status}
+                        {hoveredSeat.status === 'FOR_SALE' ? `${hoveredSeat.price} ALL` : hoveredSeat.status}
                     </p>
                 </div>
             )}
