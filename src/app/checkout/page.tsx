@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma';
 import CheckoutForm from '@/components/CheckoutForm';
 import styles from './page.module.css';
+import CheckoutForm from '@/components/CheckoutForm';
+import styles from './page.module.css';
 
 export default async function CheckoutPage({ searchParams }: { searchParams: Promise<{ ids: string }> }) {
     const { ids } = await searchParams;
