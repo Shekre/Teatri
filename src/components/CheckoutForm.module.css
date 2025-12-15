@@ -1,0 +1,86 @@
+.form {
+    background: var(--color-bg-paper);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.field {
+    margin-bottom: 20px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.field input {
+    width: 100%;
+    padding: 12px;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.field input:focus {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+.paymentMock {
+    margin: 30px 0;
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+
+.cardInfo {
+    font-family: monospace;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payBtn {
+    width: 100%;
+    padding: 15px;
+    background: var(--color-primary);
+    color: #000;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.payBtn:hover {
+    background: var(--color-primary-dark);
+}
+
+.payBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.success {
+    text-align: center;
+    padding: 50px;
+    background: var(--color-bg-paper);
+    border-radius: 8px;
+}
+
+.success h2 {
+    color: var(--color-success);
+    margin-bottom: 20px;
+}
+
+.success button {
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    margin-top: 20px;
+}

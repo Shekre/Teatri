@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// -- Events --
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  image       String?  // Main banner
+  startDate   DateTime
+  endDate     DateTime
+  location    String   @default("TKOB Main Hall")
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  priceAreas  PriceArea[]
+  bookings    Booking[]
+}
+
+// -- Pricing Rules --
+// Each event has multiple PriceAreas.
+// Highest priority match wins for a seat.
+model PriceArea {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  name        String   // e.g. "Plate Rows 1-5"
+  
+  // Selectors: How we target seats. 
+  // Stored as JSON: { rows: ["A","B"], blocks: ["Llozha 1"], seatNumbers: [1,2,3] }
+  // If a seat matches ANY of the conditions (OR logic inside, AND logic between fields? Usually simple inclusion)
+  // Let's define it as strict JSON for flexibility.
+  selectors   String   // JSON string
+  
+  saleStatus  String   // FOR_SALE, NOT_FOR_SALE, ADMIN_RESERVED
+  price       Float?   // NULL if not for sale
+  priority    Int      @default(0) // Higher wins
+  
+  color       String?  // For admin visualization (hex)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// -- Seats (Static Layout) --
+model Seat {
+  id          String   @id @default(cuid())
+  section     String   // "Parterre", "Llozha 1", "Llozha 2"
+  row         String?  // "A", "B", ...
+  number      String   // "1", "2", ...
+  x           Float?   // Coordinate for canvas
+  y           Float?   // Coordinate for canvas
+  
+  // No relation to EventPrice, computed at runtime
+  bookings    Ticket[]
+}
+
+// -- Bookings & Users --
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  password    String?  // Null for guest
+  role        String   @default("USER") // ADMIN, USER
+  
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+  
+  guestEmail    String?  // Redundant but useful if user not linked
+  guestName     String?
+
+  eventId       String
+  event         Event    @relation(fields: [eventId], references: [id])
+  
+  status        String   // PENDING, CONFIRMED, CANCELLED, EXPIRED
+  totalAmount   Float
+  currency      String   @default("ALL")
+  
+  expiresAt     DateTime? // For hold
+  paymentIntent String?  // Stripe ID
+  
+  tickets       Ticket[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  seatId      String
+  seat        Seat     @relation(fields: [seatId], references: [id])
+  
+  priceAtBooking Float
+  
+  @@unique([bookingId, seatId]) // One ticket per seat per booking
+}

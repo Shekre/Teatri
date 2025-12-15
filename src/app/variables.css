@@ -1,0 +1,55 @@
+:root {
+  /* Colors */
+  --color-primary: #D4AF37; /* Clean Gold */
+  --color-primary-dark: #B5952F;
+  --color-secondary: #8B0000; /* Deep Red */
+  --color-accent: #1A1A1A; /* Dark contrast */
+  
+  /* Backgrounds */
+  --color-bg: #0F0F0F; /* Very dark grey, almost black */
+  --color-bg-paper: #1E1E1E; /* Slightly lighter for cards */
+  --color-bg-elevated: #2C2C2C;
+  
+  /* Text */
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #666666;
+  --color-text-inverse: #000000;
+
+  /* Status */
+  --color-success: #4CAF50;
+  --color-error: #f44336;
+  --color-warning: #ff9800;
+  --color-info: #2196f3;
+  --color-seat-sold: #444444;
+  --color-seat-available: #D4AF37;
+  --color-seat-selected: #FFFFFF;
+  --color-seat-held: #ff9800;
+
+  /* Typography */
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+}
+
+@media (prefers-color-scheme: light) {
+  /* Optional: Admin might want light mode, but sticking to Dark/Premium for Guest view usually.
+     For now, we enforce dark mode aesthetics for the "Premium" feel requested */
+}

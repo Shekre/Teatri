@@ -1,0 +1,149 @@
+.main {
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-2xl);
+    background: transparent;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.logo {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.nav a {
+    color: rgba(255, 255, 255, 0.8);
+    margin-left: var(--spacing-lg);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.hero {
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: var(--spacing-2xl);
+    position: relative;
+}
+
+.heroContent {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.badge {
+    background: var(--color-primary);
+    color: #000;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    margin-bottom: var(--spacing-md);
+}
+
+.hero h1 {
+    font-size: 4rem;
+    color: #fff;
+    margin-bottom: var(--spacing-sm);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    line-height: 1.1;
+}
+
+.meta {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-2xl);
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-2xl);
+}
+
+.description h3 {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: var(--spacing-sm);
+}
+
+.description p {
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+}
+
+.sidebar {
+    position: relative;
+}
+
+.ticketBox {
+    background: var(--color-bg-paper);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    position: sticky;
+    top: var(--spacing-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.priceLabel {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    letter-spacing: 1px;
+}
+
+.priceValue {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: var(--spacing-xs) 0 var(--spacing-lg);
+    font-family: var(--font-serif);
+}
+
+.buyButton {
+    display: block;
+    background: var(--color-primary);
+    color: #000;
+    font-weight: 700;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background var(--transition-fast);
+}
+
+.buyButton:hover {
+    background: var(--color-primary-dark);
+}
+
+.note {
+    margin-top: var(--spacing-md);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
