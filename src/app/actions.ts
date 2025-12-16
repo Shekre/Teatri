@@ -1,85 +1,87 @@
 'use server';
 
-import { holdSeat, confirmBooking } from '@/lib/booking';
-import { redirect } from 'next/navigation';
-
-export async function holdSeatsAction(eventId: string, seatIds: string[]) {
-    // We need to hold EACH seat.
-    // Ideally this should be one transaction, but holdSeat is per seat in my current lib.
-    // I should probably refactor holdSeat to take array, but for now loop is okay (parallel).
-
-    // NOTE: Simple loop might partial fail. 
-    // Production app needs atomic "holdAllOrNone".
-    // Assuming high availability for now.
-
-    const results = await Promise.all(seatIds.map(id => holdSeat(eventId, id, null))); // Guest ID placeholder
-
-    const failed = results.find(r => !r.success);
-    if (failed) {
-        return { success: false, error: failed.error || 'Failed to hold seats' };
-    }
-
-    // All success. We get the booking IDs.
-    // Actually holdSeat creates a PENDING booking for EACH seat?
-    // Logic in holdSeat creates a Booking with ONE ticket.
-    // If user selected 3 seats, we have 3 bookings?
-    // Ideally we want 1 Booking with 3 Tickets.
-    // My `booking.ts` logic created `booking.create` per seat.
-    // This is a flaw in my previous `booking.ts`.
-    // I should Refactor `booking.ts` to `holdSeats(eventId, seatIds[], ...)`
-
-    // But to keep moving: I will assume 1 seat per booking is annoying but workable, 
-    // OR I fix `booking.ts` now.
-    // Fixing is better.
-
-    // User asked for "Do everything till the end".
-    // I will refactor `booking.ts` to support multiple seats holding.
-    // Wait, I can't easily edit `booking.ts` without viewing. I overwrote it.
-
-    // Alternative: Collect the booking IDs and pass them to checkout.
-    // `?bookingIds=1,2,3`
-    const bookingIds = results.map(r => r.booking!.id);
-
-    // Redirect to checkout
-    // We can't redirect inside try/catch block if we want to return error state.
-    // But Server Actions can redirect.
-    // Warning: Redirect throws error, so do it last.
-
-    return { success: true, bookingIds };
-}
-
 import { prisma } from '@/lib/prisma';
+import { generate2CheckoutLink } from '@/lib/2checkout';
+import crypto from 'crypto';
 
-export async function processPaymentAction(bookingIds: string[], email: string, name: string) {
-    // 1. Simulate Payment
-    const paymentIntentId = 'pi_mock_' + Date.now();
-
-    // 2. Confirm all bookings
-    // Also update with User Email/Name?
-    // My `confirmBooking` function didn't take email/name.
-    // I need to update User/Booking with guest details.
-
-    // Again, need to refactor `booking.ts` or Update manually here using Prisma directly?
-    // I'll use Prisma directly here for expediency.
+export async function initiateCheckoutAction(
+    eventId: string,
+    seatIds: string[],
+    email: string,
+    fullName: string,
+    phone: string
+) {
+    if (!eventId || !seatIds.length || !email || !fullName) {
+        return { success: false, error: 'Missing required fields' };
+    }
 
     try {
-        await prisma.$transaction(async (tx: any) => {
-            for (const id of bookingIds) {
-                // Confirm
-                await tx.booking.update({
-                    where: { id },
-                    data: {
-                        status: 'CONFIRMED',
-                        paymentIntent: paymentIntentId,
-                        guestEmail: email,
-                        guestName: name
-                    }
-                });
+        // 1. Calculate price
+        // For now, fetch prices from database if possible, or assume fixed price logic
+        // This is a simplification. Ideally, checks "PriceArea" or "TicketType".
+        // Let's assume a function or logic exists. For now, 1000 ALL per seat.
+        // TODO: use real pricing logic
+        const pricePerSeat = 1000 * 100; // 1000 ALL in cents
+        const totalAmount = pricePerSeat * seatIds.length;
+
+        // 2. Create Order and Locks in transaction
+        const { redirectUrl } = await prisma.$transaction(async (tx) => {
+            // Check if seats already locked/sold
+            const existingLocks = await tx.seatLock.findMany({
+                where: {
+                    eventId,
+                    seatId: { in: seatIds },
+                    status: { in: ['HELD', 'SOLD'] },
+                    expiresAt: { gt: new Date() } // Active only
+                }
+            });
+
+            if (existingLocks.length > 0) {
+                throw new Error(`One or more seats are already reserved.`);
             }
+
+            // Create Order
+            const order = await tx.order.create({
+                data: {
+                    eventId,
+                    email,
+                    fullName,
+                    phone,
+                    currency: 'ALL',
+                    totalAmountALL: totalAmount,
+                    status: 'PENDING',
+                    publicToken: crypto.randomBytes(16).toString('hex'),
+                    items: {
+                        create: seatIds.map(seatId => ({
+                            seatId,
+                            seatLabel: seatId, // Should look up label
+                            priceALL: pricePerSeat
+                        }))
+                    }
+                },
+                include: { items: true }
+            });
+
+            // Create Locks
+            await tx.seatLock.createMany({
+                data: seatIds.map(seatId => ({
+                    eventId,
+                    seatId,
+                    orderId: order.id,
+                    expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+                    status: 'HELD'
+                }))
+            });
+
+            // Generate Link
+            const url = generate2CheckoutLink(order, order.items);
+            return { redirectUrl: url };
         });
+
+        return { success: true, redirectUrl };
+
     } catch (e: any) {
+        console.error('Checkout creation failed', e);
         return { success: false, error: e.message };
     }
-
-    return { success: true };
 }

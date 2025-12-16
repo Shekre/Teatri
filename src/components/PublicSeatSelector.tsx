@@ -89,16 +89,12 @@ export default function PublicSeatSelector({ seatStatusMap, eventId }: Props) {
         setSelectedSeats(newSelection);
     };
 
-    const handleCheckout = async () => {
+    const handleCheckout = () => {
         if (selectedSeats.size === 0) return;
 
-        const result = await holdSeatsAction(eventId, Array.from(selectedSeats));
-
-        if (result.success && result.bookingIds) {
-            router.push(`/checkout?ids=${result.bookingIds.join(',')}`);
-        } else {
-            alert('Failed to hold seats: ' + result.error);
-        }
+        // Redirect to new checkout page with seat IDs and event ID
+        const seats = Array.from(selectedSeats).join(',');
+        router.push(`/checkout?seats=${seats}&eventId=${eventId}`);
     };
 
     const renderPlatea = () => (

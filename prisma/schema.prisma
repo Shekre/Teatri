@@ -118,3 +118,81 @@ model PageContent {
   content   Json     // Structure depends on page
   updatedAt DateTime @updatedAt
 }
+
+// Payment system enums
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+}
+
+enum SeatLockStatus {
+  HELD
+  SOLD
+  RELEASED
+}
+
+// Order model for guest checkout
+model Order {
+  id              String      @id @default(cuid())
+  eventId         String
+  email           String
+  fullName        String
+  phone           String?
+  currency        String      @default("ALL")
+  totalAmountALL  Int
+  status          OrderStatus @default(PENDING)
+  paymentProvider String      @default("2checkout")
+  paymentRef      String?
+  publicToken     String      @unique // For guest access to order
+  
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  paidAt          DateTime?
+  
+  // Email tracking
+  emailSentAt     DateTime?
+  lastEmailError  String?
+  
+  // File URLs
+  ticketUrl       String?
+  invoiceUrl      String?
+  icsUrl          String?
+  
+  // Relations
+  items           OrderItem[]
+  locks           SeatLock[]
+  
+  @@index([email])
+  @@index([status])
+  @@index([publicToken])
+}
+
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  seatId     String
+  seatLabel  String
+  priceALL   Int
+  
+  order      Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  @@index([orderId])
+}
+
+model SeatLock {
+  id        String          @id @default(cuid())
+  eventId   String
+  seatId    String
+  orderId   String
+  expiresAt DateTime
+  status    SeatLockStatus  @default(HELD)
+  
+  order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Prevent double booking
+  @@unique([eventId, seatId])
+  @@index([eventId, expiresAt])
+  @@index([orderId])
+}
