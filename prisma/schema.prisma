@@ -125,6 +125,7 @@ enum OrderStatus {
   PAID
   FAILED
   EXPIRED
+  REFUNDED
 }
 
 enum SeatLockStatus {
@@ -143,8 +144,17 @@ model Order {
   currency        String      @default("ALL")
   totalAmountALL  Int
   status          OrderStatus @default(PENDING)
-  paymentProvider String      @default("2checkout")
+  
+  // Payment Details
+  provider        String      @default("2checkout") // New
+  providerRefNo   String?     // New (REFNO from IPN)
+  ipnPayload      Json?       // New (Full IPN body)
+  paymentStatus   String      @default("PENDING") // New (Explicit status from IPN)
+  
+  // Legacy/Compatibility fields (keep if needed or deprecate)
+  paymentProvider String      @default("2checkout") 
   paymentRef      String?
+  
   publicToken     String      @unique // For guest access to order
   
   // Timestamps

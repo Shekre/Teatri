@@ -40,6 +40,17 @@ export async function initiateCheckoutAction(
                 throw new Error(`One or more seats are already reserved.`);
             }
 
+            // Cleanup expired/stale locks for these seats to avoid Unique Constraint violation
+            // We only keep 'SOLD' or active 'HELD' (which we already checked above).
+            // So getting here means any remaining locks are expired or 'RELEASED'.
+            await tx.seatLock.deleteMany({
+                where: {
+                    eventId,
+                    seatId: { in: seatIds },
+                    status: { not: 'SOLD' }
+                }
+            });
+
             // Create Order
             const order = await tx.order.create({
                 data: {
