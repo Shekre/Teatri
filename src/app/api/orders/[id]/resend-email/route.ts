@@ -46,7 +46,7 @@ async function sendTicketEmail(order: any, event: any) {
         <h2>Order Details</h2>
         <p><strong>Order ID:</strong> ${order.id}</p>
         <p><strong>Event:</strong> ${event.title}</p>
-        <p><strong>Date:</strong> ${new Date(event.startDateTime).toLocaleString('en-US', {
+        <p><strong>Date:</strong> ${new Date(event.startDate).toLocaleString('en-US', {
         dateStyle: 'full',
         timeStyle: 'short'
     })}</p>

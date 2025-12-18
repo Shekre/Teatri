@@ -1,11 +1,11 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import styles from './page.module.css';
 import { initiateCheckoutAction } from '../actions';
 
-export default function CheckoutPage() {
+function CheckoutContent() {
     const searchParams = useSearchParams();
     const seatIds = searchParams.get('seats')?.split(',') || [];
     const eventId = searchParams.get('eventId') || '';
@@ -133,5 +133,13 @@ export default function CheckoutPage() {
                 </form>
             </div>
         </main>
+    );
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CheckoutContent />
+        </Suspense>
     );
 }

@@ -5,7 +5,7 @@ export const runtime = 'nodejs';
 
 // Generate .ics calendar file
 function generateICS(event: any, order: any): string {
-    const startDate = new Date(event.startDateTime);
+    const startDate = new Date(event.startDate);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000); // +2 hours
 
     const formatDate = (date: Date) => {

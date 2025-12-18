@@ -4,7 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 import Link from 'next/link';
 
-export default function CancelledPage() {
+import { Suspense } from 'react';
+
+function CancelledContent() {
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
 
@@ -43,5 +45,13 @@ export default function CancelledPage() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function CancelledPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CancelledContent />
+        </Suspense>
     );
 }

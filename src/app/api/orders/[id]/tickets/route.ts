@@ -16,7 +16,7 @@ function generateTextTicket(event: any, order: any): string {
 
 ${event.title}
 
-Date: ${new Date(event.startDateTime).toLocaleString('en-US', {
+Date: ${new Date(event.startDate).toLocaleString('en-US', {
         dateStyle: 'full',
         timeStyle: 'short'
     })}

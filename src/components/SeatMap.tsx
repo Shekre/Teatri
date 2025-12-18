@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { holdSeatsAction } from '@/app/actions'; // Server Action
+
 import styles from './SeatMap.module.css';
 
 export type SeatState = {
@@ -40,17 +40,9 @@ export default function SeatMap({ seats, eventId }: Props) {
         });
     };
 
-    const handleCheckout = async () => {
+    const handleCheckout = () => {
         if (selectedSeatIds.length === 0) return;
-
-        // Call Server Action
-        const result = await holdSeatsAction(eventId, selectedSeatIds);
-
-        if (result.success && result.bookingIds) {
-            router.push(`/checkout?ids=${result.bookingIds.join(',')}`);
-        } else {
-            alert('Failed to hold seats: ' + result.error);
-        }
+        router.push(`/checkout?seats=${selectedSeatIds.join(',')}&eventId=${eventId}`);
     };
 
     return (

@@ -1,12 +1,12 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import styles from './page.module.css';
 
 type OrderStatus = 'PENDING' | 'PAID' | 'FAILED' | 'EXPIRED';
 
-export default function SuccessPage() {
+function SuccessContent() {
     const searchParams = useSearchParams();
     const orderId = searchParams.get('orderId');
     const token = searchParams.get('t');
@@ -139,7 +139,7 @@ export default function SuccessPage() {
                     <h2>Order Details</h2>
                     <p><strong>Order ID:</strong> {order.id}</p>
                     <p><strong>Event:</strong> {order.event?.title}</p>
-                    <p><strong>Date:</strong> {new Date(order.event?.startDateTime).toLocaleString()}</p>
+                    <p><strong>Date:</strong> {new Date(order.event?.startDate).toLocaleString()}</p>
 
                     <h3>Your Seats:</h3>
                     <ul>
@@ -192,5 +192,13 @@ export default function SuccessPage() {
                 </div>
             </div>
         </main>
+    );
+}
+
+export default function SuccessPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SuccessContent />
+        </Suspense>
     );
 }

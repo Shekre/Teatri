@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { holdSeatsAction } from '@/app/actions';
+
 import styles from './PublicSeatSelector.module.css';
 
 // Same layouts as admin

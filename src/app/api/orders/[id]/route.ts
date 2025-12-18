@@ -59,9 +59,9 @@ export async function GET(
             event: event ? {
                 id: event.id,
                 title: event.title,
-                startDateTime: event.startDateTime
+                startDate: event.startDate
             } : null,
-            items: order.items.map(item => ({
+            items: order.items.map((item: any) => ({
                 seatLabel: item.seatLabel,
                 priceALL: item.priceALL
             })),
