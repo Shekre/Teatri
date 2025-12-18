@@ -5,9 +5,7 @@ export const runtime = 'nodejs';
 
 export async function GET() {
     try {
-        console.log('[Cleanup Job] Starting
-
-...');
+        console.log('[Cleanup Job] Starting...');
 
         const now = new Date();
 

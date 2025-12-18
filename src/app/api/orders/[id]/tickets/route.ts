@@ -5,7 +5,7 @@ export const runtime = 'nodejs';
 
 // Simple text-based ticket (will be replaced with PDF in production)
 function generateTextTicket(event: any, order: any): string {
-    const seatList = order.items.map((item: any =>
+    const seatList = order.items.map((item: any) =>
         `  • ${item.seatLabel} - ${item.priceALL / 100} ALL`
     ).join('\n');
 
